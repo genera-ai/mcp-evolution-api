@@ -1,5 +1,5 @@
 {
-  "name": "mcp-evolution-whatsapp-api",
+  "name": "mcp-evolution-api",
   "version": "1.0.0",
   "description": "Servidor MCP para Evolution API do WhatsApp",
   "main": "dist/main.js",
@@ -13,9 +13,10 @@
   "keywords": [
     "mcp",
     "evolution-api",
-    "whatsapp"
+    "whatsapp",
+    "generaai"
   ],
-  "author": "",
+  "author": "Rubens U M Mendonça <suporte@generaai.com.br> (https://www.generaai.com.br)",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.5",
@@ -29,5 +30,13 @@
     "@types/node": "^20.10.6",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
+  },
+  "contributors": [
+    "Cursor AI (https://cursor.sh)"
+  ],
+  "homepage": "https://www.generaai.com.br",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/generaai/mcp-evolution-api"
   }
 } 

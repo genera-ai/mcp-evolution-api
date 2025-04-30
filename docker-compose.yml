@@ -1,10 +1,11 @@
 version: '3.8'
 
 services:
-  mcp-server:
+  mcp-evolution-api:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: mcp-evolution-api
     ports:
       - "3000:3000"
     environment:
@@ -22,6 +23,7 @@ services:
 #
 #  evolution-api:
 #    image: evolution/evolution-api:latest
+#    container_name: evolution-api
 #    ports:
 #      - "8080:8080"
 #    environment:
@@ -38,8 +40,10 @@ services:
 networks:
   mcp-network:
     driver: bridge
+    name: mcp-evolution-network
 
 volumes:
   mcp-data:
+    name: mcp-evolution-data
 #  evolution-instances:
 #  evolution-store: 

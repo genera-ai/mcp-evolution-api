@@ -1,4 +1,4 @@
-# MCP Evolution WhatsApp API
+# MCP Evolution API
 
 Servidor MCP (Model Context Protocol) para integração com a Evolution API do WhatsApp.
 
@@ -32,9 +32,9 @@ PORT=3000
 
 | Ambiente               | Passos                                           | Comando                                                                                     |
 |------------------------|--------------------------------------------------|--------------------------------------------------------------------------------------------|
-| **Desenvolvimento Local** | 1. Clone e instale<br>2. Execute em modo dev     | `git clone https://github.com/seu-usuario/mcp-evolution-whatsapp-api.git && cd mcp-evolution-whatsapp-api && npm install && npm run dev` |
-| **Produção Local**     | 1. Clone e instale<br>2. Construa e execute      | `git clone https://github.com/seu-usuario/mcp-evolution-whatsapp-api.git && cd mcp-evolution-whatsapp-api && npm install && npm run build && npm start` |
-| **Docker**             | Execute container Docker                          | `docker run -d -p 3000:3000 -e EVOLUTION_API_URL=seuurl -e EVOLUTION_API_KEY=suachave --name mcp-evolution-whatsapp-api seu-usuario/mcp-evolution-whatsapp-api:latest` |
+| **Desenvolvimento Local** | 1. Clone e instale<br>2. Execute em modo dev     | `git clone https://github.com/generaai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run dev` |
+| **Produção Local**     | 1. Clone e instale<br>2. Construa e execute      | `git clone https://github.com/generaai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run build && npm start` |
+| **Docker**             | Execute container Docker                          | `docker run -d -p 3000:3000 -e EVOLUTION_API_URL=seuurl -e EVOLUTION_API_KEY=suachave --name mcp-evolution-api generaai/mcp-evolution-api:latest` |
 
 ### Configuração do Claude Desktop
 
@@ -58,7 +58,7 @@ Ou, se estiver executando localmente:
     "evo-api": {
       "command": "node",
       "args": [
-        "C:/caminho/para/seu/mcp-evolution-whatsapp-api/dist/main.js"
+        "C:/caminho/para/seu/mcp-evolution-api/dist/main.js"
       ]
     }
   }
@@ -93,6 +93,13 @@ Para mais detalhes sobre a API Evolution, consulte a [documentação oficial](ht
 ## 📄 Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE para detalhes.
+
+## 👨‍💻 Créditos
+
+Desenvolvido por [Generaai](https://www.generaai.com.br)  
+Autor: Rubens U M Mendonça  
+Email: suporte@generaai.com.br  
+Projeto desenvolvido com assistência de [Cursor AI](https://cursor.com)
 
 ## Deploy com Docker
 
@@ -172,4 +179,4 @@ Os dados persistentes são armazenados no volume `mcp-data`. Para fazer backup:
 ```bash
 docker volume inspect mcp-data # Identifica o local do volume
 # Use ferramentas de backup para salvar esse diretório
-``` 
+```
