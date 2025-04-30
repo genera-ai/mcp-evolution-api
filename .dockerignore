@@ -1,0 +1,67 @@
+# Controle de versão
+.git
+.gitignore
+.github
+
+# Dependências Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Arquivos de build
+dist
+build
+*.tsbuildinfo
+
+# Arquivos de ambiente
+.env*
+!.env.example
+
+# Ferramentas de desenvolvimento
+.vscode
+.idea
+.editorconfig
+.prettierrc
+.eslintrc
+
+# Logs
+logs
+*.log
+
+# Arquivos Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Arquivos temporários
+tmp
+.tmp
+.cache
+
+# Arquivos de backup
+*.bak
+*.backup
+*~
+
+# Arquivos de documentação
+README.md
+LICENSE
+*.md
+docs
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de teste
+test
+tests
+__tests__
+coverage
+.nyc_output
+
+# Configurações específicas
+src/config.example.ts
+test-env.js 
