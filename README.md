@@ -94,12 +94,6 @@ Para mais detalhes sobre a API Evolution, consulte a [documentação oficial](ht
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE para detalhes.
 
-## Requisitos
-
-- Docker
-- Docker Compose
-- Evolution API configurada e funcionando
-
 ## Deploy com Docker
 
 ### 1. Configuração de Ambiente
@@ -109,6 +103,7 @@ Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 ```
 EVOLUTION_API_URL=http://seu-servidor-evolution-api/
 EVOLUTION_API_KEY=sua-chave-api
+PORT=3000
 ```
 
 ### 2. Build e Execução
@@ -177,33 +172,4 @@ Os dados persistentes são armazenados no volume `mcp-data`. Para fazer backup:
 ```bash
 docker volume inspect mcp-data # Identifica o local do volume
 # Use ferramentas de backup para salvar esse diretório
-```
-
-## Solução de Problemas
-
-### Erro de codificação no arquivo .env
-
-Se você encontrar o seguinte erro ao executar o Docker Compose:
-
-```
-failed to read .env: line 1: unexpected character "" in variable name "..."
-```
-
-Isso significa que seu arquivo `.env` está em uma codificação incompatível (provavelmente UTF-16). Para corrigir:
-
-**Windows:**
-1. Execute o script `fix-env.bat` que criará um novo arquivo `.env` em UTF-8
-2. Edite o arquivo `.env` com suas credenciais usando um editor como Notepad ou VS Code
-3. Certifique-se de salvar o arquivo em formato UTF-8 sem BOM
-
-**Linux/Mac:**
-1. Execute o script `fix-env.sh` (use `chmod +x fix-env.sh` para dar permissão de execução)
-2. Edite o arquivo `.env` com suas credenciais
-
-Alternativamente, você pode criar manualmente um novo arquivo `.env` em UTF-8 com as seguintes variáveis:
-
-```
-EVOLUTION_API_URL=https://sua-evolution-api.com/
-EVOLUTION_API_KEY=sua-chave-aqui
-PORT=3000
 ``` 

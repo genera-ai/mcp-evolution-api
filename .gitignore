@@ -30,4 +30,18 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
-*.swo 
+*.swo
+
+# Docker volumes e cache
+docker-volumes/
+*.tar
+.docker/
+
+# Cobertura de testes
+coverage/
+.nyc_output/
+
+# Arquivos temporários
+.tmp/
+tmp/
+temp/ 
