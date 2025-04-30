@@ -83,7 +83,7 @@ Crie uma nova instância do WhatsApp com o nome "minha_instancia"
 
 ### Enviar uma mensagem
 ```
-Envie a mensagem "Olá, como vai?" para o número 5511987654321 usando a instância "minha_instancia"
+Envie a mensagem "Olá, como vai?" para o número 551199999999 usando a instância "minha_instancia"
 ```
 
 ## 📚 Documentação
