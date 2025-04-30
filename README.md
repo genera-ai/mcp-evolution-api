@@ -32,8 +32,8 @@ PORT=3000
 
 | Ambiente               | Passos                                           | Comando                                                                                     |
 |------------------------|--------------------------------------------------|--------------------------------------------------------------------------------------------|
-| **Desenvolvimento Local** | 1. Clone e instale<br>2. Execute em modo dev     | `git clone https://github.com/generaai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run dev` |
-| **Produção Local**     | 1. Clone e instale<br>2. Construa e execute      | `git clone https://github.com/generaai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run build && npm start` |
+| **Desenvolvimento Local** | 1. Clone e instale<br>2. Execute em modo dev     | `git clone https://github.com/genera-ai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run dev` |
+| **Produção Local**     | 1. Clone e instale<br>2. Construa e execute      | `git clone https://github.com/genera-ai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run build && npm start` |
 | **Docker**             | Execute container Docker                          | `docker run -d -p 3000:3000 -e EVOLUTION_API_URL=seuurl -e EVOLUTION_API_KEY=suachave --name mcp-evolution-api generaai/mcp-evolution-api:latest` |
 
 ### Configuração do Claude Desktop
