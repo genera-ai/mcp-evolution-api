@@ -4,7 +4,7 @@ Servidor MCP (Model Context Protocol) para integração com a Evolution API do W
 
 ## 📋 Visão Geral
 
-Este servidor MCP permite que o Claude interaja com o WhatsApp através da Evolution API, habilitando recursos como:
+Este servidor MCP permite que modelos de linguagem interajam com o WhatsApp através da Evolution API, habilitando recursos como:
 - Gerenciamento de instâncias do WhatsApp
 - Envio de mensagens de texto
 - Obtenção de QR Code para conexão
@@ -12,21 +12,25 @@ Este servidor MCP permite que o Claude interaja com o WhatsApp através da Evolu
 
 ## 🚀 Configuração Rápida
 
-### Configuração de Ambiente
-
-Crie um arquivo `.env` com suas credenciais da Evolution API:
-
-```
-EVOLUTION_API_URL=https://your-evolution-api-server.com
-EVOLUTION_API_KEY=your-api-key-here
-PORT=3000
-```
-
 ### Requisitos
 
 - Node.js 18 ou superior
 - NPM ou Yarn
-- Evolution API instalada e rodando (veja a [documentação oficial](https://github.com/evolution-api/evolution-api))
+- Acesso a uma instalação da Evolution API (URL e chave de API)
+
+### Configuração de Ambiente
+
+Crie um arquivo `.env` com suas credenciais da Evolution API:
+
+```env
+# Evolution API
+EVOLUTION_API_URL=https://sua-evolution-api.com/
+EVOLUTION_API_KEY=sua_chave_da_evolution_api
+PORT=3000
+
+# Autenticação
+API_KEY=sua_chave_api_para_acesso
+```
 
 ### 📋 Opções de Implantação
 
@@ -34,40 +38,22 @@ PORT=3000
 |------------------------|--------------------------------------------------|--------------------------------------------------------------------------------------------|
 | **Desenvolvimento Local** | 1. Clone e instale<br>2. Execute em modo dev     | `git clone https://github.com/genera-ai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run dev` |
 | **Produção Local**     | 1. Clone e instale<br>2. Construa e execute      | `git clone https://github.com/genera-ai/mcp-evolution-api.git && cd mcp-evolution-api && npm install && npm run build && npm start` |
-| **Docker**             | Execute container Docker                          | `docker run -d -p 3000:3000 -e EVOLUTION_API_URL=seuurl -e EVOLUTION_API_KEY=suachave --name mcp-evolution-api generaai/mcp-evolution-api:latest` |
+| **Docker**             | Execute container Docker                          | `docker run -d -p 3000:3000 -e EVOLUTION_API_URL=seuurl -e EVOLUTION_API_KEY=suachave -e API_KEY=suaapikey --name mcp-evolution-api generaai/mcp-evolution-api:latest` |
 
-### Configuração do Claude Desktop
+## 🔒 Autenticação
 
-Adicione isto ao seu arquivo de configuração do Claude Desktop (geralmente localizado em `%APPDATA%/Claude/claude_desktop_config.json` no Windows):
+O sistema utiliza autenticação por API Key para proteger os endpoints. Para autenticar suas requisições, adicione um cabeçalho `X-API-Key` com a chave definida na variável de ambiente `API_KEY`:
 
-```json
-{
-  "mcpServers": {
-    "evo-api": {
-      "url": "http://localhost:3000"
-    }
-  }
-}
+```bash
+curl -X GET http://localhost:3000/tools \
+  -H "X-API-Key: sua_chave_api"
 ```
 
-Ou, se estiver executando localmente:
-
-```json
-{
-  "mcpServers": {
-    "evo-api": {
-      "command": "node",
-      "args": [
-        "C:/caminho/para/seu/mcp-evolution-api/dist/main.js"
-      ]
-    }
-  }
-}
-```
+Todas as rotas da API (exceto `/initialize`) são protegidas e requerem autenticação via cabeçalho `X-API-Key`.
 
 ## 🔧 Ferramentas Disponíveis
 
-O servidor MCP expõe as seguintes ferramentas para o Claude:
+O servidor MCP expõe as seguintes ferramentas:
 
 - **createEvolutionInstance**: Cria uma nova instância do WhatsApp
 - **listEvolutionInstances**: Lista todas as instâncias disponíveis
@@ -76,19 +62,67 @@ O servidor MCP expõe as seguintes ferramentas para o Claude:
 
 ## 🧪 Exemplos de Uso
 
-### Criar uma nova instância
-```
-Crie uma nova instância do WhatsApp com o nome "minha_instancia"
+### Listar Ferramentas Disponíveis
+
+```bash
+curl -X GET http://localhost:3000/tools \
+  -H "X-API-Key: sua_chave_api"
 ```
 
-### Enviar uma mensagem
-```
-Envie a mensagem "Olá, como vai?" para o número 551199999999 usando a instância "minha_instancia"
+### Executar uma Ferramenta (Listar Instâncias)
+
+```bash
+curl -X POST http://localhost:3000/tools/listEvolutionInstances \
+  -H "X-API-Key: sua_chave_api" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
-## 📚 Documentação
+## 🐳 Deploy com Docker
 
-Para mais detalhes sobre a API Evolution, consulte a [documentação oficial](https://docs.evolution-api.com/).
+### 1. Usando variáveis de ambiente
+
+```bash
+docker run -d -p 3000:3000 \
+  -e EVOLUTION_API_URL=https://sua-evolution-api.com/ \
+  -e EVOLUTION_API_KEY=sua_chave_da_evolution_api \
+  -e API_KEY=sua_chave_api \
+  --name mcp-evolution-api generaai/mcp-evolution-api:latest
+```
+
+### 2. Usando arquivo .env com --env-file
+
+Crie um arquivo `.env.docker` e execute:
+
+```bash
+docker run -d -p 3000:3000 \
+  --env-file .env.docker \
+  --name mcp-evolution-api generaai/mcp-evolution-api:latest
+```
+
+### 3. Usando Docker Compose
+
+Crie um arquivo `docker-compose.yml`:
+
+```yaml
+version: '3'
+
+services:
+  mcp-evolution-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - EVOLUTION_API_URL=https://sua-evolution-api.com/
+      - EVOLUTION_API_KEY=sua_chave_da_evolution_api
+      - PORT=3000
+      - API_KEY=sua_chave_api
+```
+
+E execute:
+```bash
+docker-compose up -d
+```
 
 ## 📄 Licença
 
@@ -98,85 +132,4 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo LICENSE para d
 
 Desenvolvido por [Generaai](https://www.generaai.com.br)  
 Autor: Rubens U M Mendonça  
-Email: suporte@generaai.com.br  
-Projeto desenvolvido com assistência de [Cursor AI](https://cursor.com)
-
-## Deploy com Docker
-
-### 1. Configuração de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-
-```
-EVOLUTION_API_URL=http://seu-servidor-evolution-api/
-EVOLUTION_API_KEY=sua-chave-api
-PORT=3000
-```
-
-### 2. Build e Execução
-
-Para iniciar o servidor em modo de produção:
-
-```bash
-docker-compose up -d
-```
-
-Este comando irá:
-- Construir a imagem Docker
-- Iniciar o container em modo detached (background)
-- Mapear a porta 3000 para acesso ao servidor MCP
-
-### 3. Verificar Logs
-
-Para acompanhar os logs da aplicação:
-
-```bash
-docker-compose logs -f
-```
-
-### 4. Parar o Servidor
-
-Para parar o servidor:
-
-```bash
-docker-compose down
-```
-
-## Integração com a Evolution API no Docker
-
-O arquivo `docker-compose.yml` inclui uma configuração comentada para executar a Evolution API junto com o servidor MCP. Para habilitar essa integração:
-
-1. Edite o arquivo `docker-compose.yml` e descomente as seções relacionadas à Evolution API
-2. Ajuste as variáveis de ambiente conforme necessário
-3. Execute o comando `docker-compose up -d`
-
-Isso irá iniciar tanto o servidor MCP quanto a Evolution API em containers separados, mas na mesma rede Docker, permitindo que se comuniquem entre si.
-
-Para esse cenário, configure a variável `EVOLUTION_API_URL` como `http://evolution-api:8080/` no arquivo `.env`.
-
-## Uso do Servidor MCP
-
-O servidor estará disponível em `http://localhost:3000` com os seguintes endpoints:
-
-- `/mcp/tools` - Lista todas as ferramentas disponíveis
-- `/mcp/run` - Executa uma ferramenta específica
-
-## Manutenção
-
-### Atualização
-
-Para atualizar a aplicação com novas mudanças:
-
-```bash
-git pull
-docker-compose up -d --build
-```
-
-### Backup
-
-Os dados persistentes são armazenados no volume `mcp-data`. Para fazer backup:
-
-```bash
-docker volume inspect mcp-data # Identifica o local do volume
-# Use ferramentas de backup para salvar esse diretório
-```
+Email: suporte@generaai.com.br

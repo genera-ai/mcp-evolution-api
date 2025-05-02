@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { createEvolutionInstance, getWhatsAppQrCode, listEvolutionInstances, sendWhatsAppMessage } from '../tools/index.js';
 import { MCPPrompt, MCPResource, MCPTool, MCPToolRequest } from '../types/mcp.js';
+import { apiKeyMiddleware } from '../middleware/auth.js';
 
 /**
  * Classe que implementa um servidor MCP (Model Context Protocol)
@@ -58,7 +59,7 @@ export class MCPServer {
    * Configura as rotas para o protocolo MCP
    */
   private setupRoutes(): void {
-    // Rota de inicialização
+    // Rota de inicialização (sem proteção)
     this.app.post('/initialize', (req: Request, res: Response) => {
       const response = {
         protocol: {
@@ -69,13 +70,14 @@ export class MCPServer {
       res.json(response);
     });
 
+    // Rotas protegidas por autenticação via API Key
     // Rota para listar recursos
-    this.app.get('/resources', (_req: Request, res: Response) => {
+    this.app.get('/resources', apiKeyMiddleware, (_req: Request, res: Response) => {
       res.json({ resources: this.resources });
     });
 
     // Rota para listar ferramentas
-    this.app.get('/tools', (_req: Request, res: Response) => {
+    this.app.get('/tools', apiKeyMiddleware, (_req: Request, res: Response) => {
       // Removemos o handler das ferramentas para não expor a implementação
       const toolsWithoutHandlers = this.tools.map(({ name, description, parameters }) => {
         return { name, description, parameters };
@@ -84,12 +86,12 @@ export class MCPServer {
     });
 
     // Rota para listar prompts
-    this.app.get('/prompts', (_req: Request, res: Response) => {
+    this.app.get('/prompts', apiKeyMiddleware, (_req: Request, res: Response) => {
       res.json({ prompts: this.prompts });
     });
 
     // Rota para executar ferramentas
-    this.app.post('/tools/:name', async (req: Request, res: Response) => {
+    this.app.post('/tools/:name', apiKeyMiddleware, async (req: Request, res: Response) => {
       const { name } = req.params;
       const parameters = req.body.parameters || {};
 

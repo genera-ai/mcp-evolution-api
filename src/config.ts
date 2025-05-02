@@ -48,6 +48,9 @@ export const config = {
   server: {
     port: parseInt(process.env.PORT || '3000', 10),
   },
+  auth: {
+    apiKey: process.env.API_KEY
+  }
 };
 
 // Validação das variáveis obrigatórias
@@ -56,6 +59,7 @@ export function validateConfig(): void {
   console.log(`EVOLUTION_API_URL: ${config.evolutionApi.url}`);
   console.log(`EVOLUTION_API_KEY: ${config.evolutionApi.key ? '[PRESENTE]' : '[AUSENTE]'}`);
   console.log(`PORT: ${config.server.port}`);
+  console.log(`API_KEY: ${config.auth.apiKey ? '[PRESENTE]' : '[AUSENTE]'}`);
 
   if (!config.evolutionApi.url) {
     throw new Error('A variável de ambiente EVOLUTION_API_URL é obrigatória');
@@ -63,5 +67,9 @@ export function validateConfig(): void {
   
   if (!config.evolutionApi.key) {
     throw new Error('A variável de ambiente EVOLUTION_API_KEY é obrigatória');
+  }
+  
+  if (!config.auth.apiKey) {
+    console.warn('Atenção: API_KEY não configurada. A autenticação por chave de API estará desabilitada');
   }
 } 
