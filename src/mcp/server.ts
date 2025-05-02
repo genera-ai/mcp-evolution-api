@@ -27,7 +27,12 @@ export class MCPServer {
     this.serverConfig = config;
     
     // Configurar middleware
-    this.app.use(cors());
+    // Habilitar CORS para todas as origens
+    this.app.use(cors({
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key']
+    }));
     this.app.use(express.json());
     
     // Configurar rotas MCP
@@ -68,6 +73,11 @@ export class MCPServer {
         server: this.serverConfig
       };
       res.json(response);
+    });
+
+    // Rota para teste de conexão - útil para verificar se o servidor está acessível
+    this.app.get('/ping', (_req: Request, res: Response) => {
+      res.json({ status: 'ok', message: 'Servidor MCP está online' });
     });
 
     // Rotas protegidas por autenticação via API Key
@@ -125,6 +135,7 @@ export class MCPServer {
   listen(port: number): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(port, '0.0.0.0', () => {
+        console.log(`Servidor escutando em http://0.0.0.0:${port}`);
         resolve();
       });
     });
