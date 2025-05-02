@@ -18,32 +18,10 @@ services:
     networks:
       - mcp-network
 
-# Descomente as linhas abaixo se desejar executar a Evolution API junto com o MCP
-# Ajuste as configurações conforme necessário
-#
-#  evolution-api:
-#    image: evolution/evolution-api:latest
-#    container_name: evolution-api
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      - SERVER_URL=http://localhost:8080
-#      - AUTHENTICATION_TYPE=apikey
-#      - AUTHENTICATION_API_KEY=sua-chave-aqui
-#    volumes:
-#      - evolution-instances:/evolution/instances
-#      - evolution-store:/evolution/store
-#    restart: unless-stopped
-#    networks:
-#      - mcp-network
-
 networks:
   mcp-network:
     driver: bridge
-    #name: mcp-evolution-network
 
 volumes:
   mcp-data:
     name: local
-#  evolution-instances:
-#  evolution-store: 
