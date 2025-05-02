@@ -3,6 +3,8 @@ import cors from 'cors';
 import { createEvolutionInstance, getWhatsAppQrCode, listEvolutionInstances, sendWhatsAppMessage } from '../tools/index.js';
 import { MCPPrompt, MCPResource, MCPTool, MCPToolRequest } from '../types/mcp.js';
 import { apiKeyMiddleware } from '../middleware/auth.js';
+import { sseMiddleware } from '../middleware/sse.js';
+import { sseManager } from '../utils/sse.js';
 
 /**
  * Classe que implementa um servidor MCP (Model Context Protocol)
@@ -80,6 +82,14 @@ export class MCPServer {
       res.json({ status: 'ok', message: 'Servidor MCP está online' });
     });
 
+    // Endpoint SSE para eventos em tempo real
+    this.app.get('/events', apiKeyMiddleware, sseMiddleware, (_req: Request, res: Response) => {
+      // Se chegou aqui, é porque a solicitação não era para SSE
+      res.status(400).json({ 
+        error: { message: 'Este endpoint é apenas para conexões SSE. Use ?stream=true ou Accept: text/event-stream' } 
+      });
+    });
+
     // Rotas protegidas por autenticação via API Key
     // Rota para listar recursos
     this.app.get('/resources', apiKeyMiddleware, (_req: Request, res: Response) => {
@@ -100,14 +110,19 @@ export class MCPServer {
       res.json({ prompts: this.prompts });
     });
 
-    // Rota para executar ferramentas
-    this.app.post('/tools/:name', apiKeyMiddleware, async (req: Request, res: Response) => {
+    // Rota para executar ferramentas com suporte a SSE para streaming de resultados
+    this.app.post('/tools/:name', apiKeyMiddleware, sseMiddleware, async (req: Request, res: Response) => {
       const { name } = req.params;
       const parameters = req.body.parameters || {};
+      const sseConnection = (req as any).sseConnection;
 
       const tool = this.tools.find(t => t.name === name);
       
       if (!tool) {
+        if (sseConnection) {
+          sseConnection.send('error', { message: `Ferramenta "${name}" não encontrada` });
+          return;
+        }
         return res.status(404).json({
           error: {
             message: `Ferramenta "${name}" não encontrada`
@@ -116,15 +131,40 @@ export class MCPServer {
       }
 
       try {
+        // Notificar início da execução se estiver usando SSE
+        if (sseConnection) {
+          sseConnection.send('executing', { 
+            tool: name,
+            status: 'started',
+            parameters 
+          });
+        }
+
+        // Executar a ferramenta
         const result = await tool.handler(parameters);
-        res.json(result);
+        
+        // Enviar o resultado
+        if (sseConnection) {
+          sseConnection.send('result', result);
+          sseConnection.send('complete', { status: 'success' });
+          // Não fechamos a conexão aqui para permitir mais eventos
+        } else {
+          res.json(result);
+        }
       } catch (error) {
         console.error(`Erro ao executar ferramenta ${name}:`, error);
-        res.status(500).json({
-          error: {
-            message: `Erro ao executar ferramenta: ${error instanceof Error ? error.message : String(error)}`
-          }
-        });
+        
+        if (sseConnection) {
+          sseConnection.send('error', { 
+            message: `Erro ao executar ferramenta: ${error instanceof Error ? error.message : String(error)}` 
+          });
+        } else {
+          res.status(500).json({
+            error: {
+              message: `Erro ao executar ferramenta: ${error instanceof Error ? error.message : String(error)}`
+            }
+          });
+        }
       }
     });
   }
@@ -134,11 +174,37 @@ export class MCPServer {
    */
   listen(port: number): Promise<void> {
     return new Promise((resolve) => {
-      this.app.listen(port, '0.0.0.0', () => {
+      const server = this.app.listen(port, '0.0.0.0', () => {
         console.log(`Servidor escutando em http://0.0.0.0:${port}`);
         resolve();
       });
+      
+      // Configurar desligamento gracioso
+      process.on('SIGINT', () => this.shutdown(server));
+      process.on('SIGTERM', () => this.shutdown(server));
     });
+  }
+
+  /**
+   * Desliga o servidor de forma graciosa
+   */
+  private shutdown(server: any): void {
+    console.log('Desligando servidor...');
+    
+    // Fechar todas as conexões SSE
+    sseManager.closeAllConnections();
+    
+    // Fechar o servidor
+    server.close(() => {
+      console.log('Servidor encerrado');
+      process.exit(0);
+    });
+    
+    // Se o servidor não fechar em 5 segundos, forçar o encerramento
+    setTimeout(() => {
+      console.error('Encerramento forçado após timeout');
+      process.exit(1);
+    }, 5000);
   }
 }
 
