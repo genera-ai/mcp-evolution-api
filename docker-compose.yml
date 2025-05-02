@@ -40,10 +40,10 @@ services:
 networks:
   mcp-network:
     driver: bridge
-    name: mcp-evolution-network
+    #name: mcp-evolution-network
 
 volumes:
   mcp-data:
-    name: mcp-evolution-data
+    name: local
 #  evolution-instances:
 #  evolution-store: 

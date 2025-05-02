@@ -122,7 +122,7 @@ export class MCPServer {
    */
   listen(port: number): Promise<void> {
     return new Promise((resolve) => {
-      this.app.listen(port, () => {
+      this.app.listen(port, '0.0.0.0', () => {
         resolve();
       });
     });
